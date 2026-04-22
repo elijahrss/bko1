@@ -1,0 +1,2394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DASA | Medicina Nuclear</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #050505;
+    --dark: #0d0d0d;
+    --dark2: #111111;
+    --dark3: #1a1a1a;
+    --gray: #2a2a2a;
+    --gray2: #3d3d3d;
+    --gray3: #6b6b6b;
+    --white: #f5f5f5;
+    --white2: #e0e0e0;
+    --cyan: #00e5ff;
+    --cyan2: #00b4cc;
+    --cyan3: #007a8c;
+    --cyan-glow: rgba(0,229,255,0.15);
+    --red: #ff1744;
+    --red2: #cc0033;
+    --red-glow: rgba(255,23,68,0.15);
+    --font-head: 'Orbitron', monospace;
+    --font-body: 'Rajdhani', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan2); border-radius: 10px; }
+
+  /* ─── CURSOR ─── */
+  .cursor {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--cyan);
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s, opacity 0.3s;
+    box-shadow: 0 0 15px var(--cyan);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.15s ease, width 0.3s, height 0.3s;
+    opacity: 0.6;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(5,5,5,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,229,255,0.1);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 4px;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--red); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--gray3);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    font-family: var(--font-head);
+  }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-badge {
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: var(--font-head);
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    padding-top: 64px;
+  }
+  #hero-canvas { position: absolute; inset: 0; }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+  }
+  @keyframes gridDrift { 0% { transform: translate(0,0); } 100% { transform: translate(60px,60px); } }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 4px;
+    border: 1px solid var(--cyan3);
+    padding: 6px 20px;
+    margin-bottom: 32px;
+    background: rgba(0,229,255,0.05);
+    animation: fadeDown 1s ease both;
+  }
+  .hero-title {
+    font-family: var(--font-head);
+    font-size: clamp(42px, 9vw, 100px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+  .hero-title .line1 { color: var(--white); display: block; }
+  .hero-title .line2 {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--cyan);
+    display: block;
+    animation: glitch 4s infinite;
+  }
+  @keyframes glitch {
+    0%,95%,100% { text-shadow: none; transform: translate(0,0); }
+    96% { text-shadow: -2px 0 var(--red); transform: translate(2px,0); }
+    97% { text-shadow: 2px 0 var(--cyan); transform: translate(-2px,0); }
+    98% { text-shadow: -2px 0 var(--red); transform: translate(0,0); }
+  }
+  .hero-sub {
+    font-size: clamp(14px, 2vw, 18px);
+    color: var(--gray3);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    animation: fadeUp 1s 0.4s ease both;
+  }
+  .hero-stats {
+    display: flex; gap: 48px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 56px;
+    animation: fadeUp 1s 0.6s ease both;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--cyan);
+    display: block;
+    line-height: 1;
+  }
+  .stat-num.red { color: var(--red); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--gray3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 4px;
+  }
+  .hero-btns {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp 1s 0.8s ease both;
+  }
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--black);
+    padding: 14px 36px;
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: none; cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.2);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(0,229,255,0.4); }
+  .btn-outline {
+    background: transparent;
+    color: var(--red);
+    padding: 14px 36px;
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: 1px solid var(--red);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .btn-outline:hover {
+    background: var(--red);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(255,23,68,0.4);
+  }
+
+  .scroll-indicator {
+    position: absolute; bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s infinite;
+    color: var(--gray3);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--cyan), transparent);
+    animation: extend 2s infinite;
+  }
+  @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+  @keyframes extend { 0%,100% { height: 40px; } 50% { height: 60px; } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 100px 40px; max-width: 1300px; margin: 0 auto; }
+  .section-full { max-width: 100%; padding-left: 0; padding-right: 0; }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+  }
+  .section-title span { color: var(--cyan); }
+  .section-title .red { color: var(--red); }
+  .section-desc {
+    color: var(--gray3);
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 640px;
+    margin-bottom: 64px;
+  }
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--cyan3), transparent);
+    margin: 0;
+    opacity: 0.4;
+  }
+
+  /* ─── O QUE É MEDICINA NUCLEAR ─── */
+  #intro { padding-top: 120px; }
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .intro-visual {
+    position: relative;
+    height: 480px;
+  }
+  .atom-container {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .atom-nucleus {
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, var(--cyan), var(--cyan2));
+    border-radius: 50%;
+    box-shadow: 0 0 60px var(--cyan), 0 0 120px rgba(0,229,255,0.3);
+    animation: pulse 2s ease-in-out infinite;
+    position: relative; z-index: 3;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: 1px;
+  }
+  @keyframes pulse { 0%,100% { transform: scale(1); box-shadow: 0 0 60px var(--cyan); } 50% { transform: scale(1.1); box-shadow: 0 0 100px var(--cyan), 0 0 200px rgba(0,229,255,0.3); } }
+  .orbit {
+    position: absolute;
+    border: 1px solid rgba(0,229,255,0.3);
+    border-radius: 50%;
+    left: 50%; top: 50%;
+    transform-origin: center center;
+  }
+  .orbit-1 {
+    width: 180px; height: 100px;
+    margin-left: -90px; margin-top: -50px;
+    animation: orbit1 3s linear infinite;
+    transform: rotateX(75deg);
+  }
+  .orbit-2 {
+    width: 260px; height: 140px;
+    margin-left: -130px; margin-top: -70px;
+    animation: orbit2 4.5s linear infinite;
+    transform: rotateX(75deg) rotateY(60deg);
+  }
+  .orbit-3 {
+    width: 340px; height: 200px;
+    margin-left: -170px; margin-top: -100px;
+    animation: orbit3 6s linear infinite;
+    transform: rotateX(75deg) rotateY(120deg);
+  }
+  @keyframes orbit1 { from { transform: rotateX(75deg) rotateZ(0deg); } to { transform: rotateX(75deg) rotateZ(360deg); } }
+  @keyframes orbit2 { from { transform: rotateX(75deg) rotateY(60deg) rotateZ(0deg); } to { transform: rotateX(75deg) rotateY(60deg) rotateZ(-360deg); } }
+  @keyframes orbit3 { from { transform: rotateX(75deg) rotateY(120deg) rotateZ(0deg); } to { transform: rotateX(75deg) rotateY(120deg) rotateZ(360deg); } }
+  .orbit-dot {
+    width: 10px; height: 10px;
+    background: var(--red);
+    border-radius: 50%;
+    position: absolute;
+    top: -5px; left: 50%;
+    margin-left: -5px;
+    box-shadow: 0 0 10px var(--red);
+  }
+
+  .info-cards {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .info-card {
+    background: var(--dark2);
+    border: 1px solid var(--gray);
+    padding: 24px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+    cursor: default;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--cyan);
+    transform: scaleY(0);
+    transition: transform 0.3s;
+    transform-origin: bottom;
+  }
+  .info-card:hover::before { transform: scaleY(1); }
+  .info-card:hover {
+    background: var(--dark3);
+    border-color: var(--cyan3);
+    transform: translateX(6px);
+  }
+  .info-card-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .info-card h3 {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .info-card p { font-size: 14px; color: var(--gray3); line-height: 1.6; }
+
+  /* ─── EXAMES CARDS ─── */
+  #exames { padding: 100px 40px; max-width: 1300px; margin: 0 auto; }
+  .exames-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    margin-top: 64px;
+  }
+  .exam-card {
+    background: var(--dark2);
+    padding: 48px 36px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    border: 1px solid transparent;
+  }
+  .exam-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--cyan-glow), transparent);
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  .exam-card:hover::after { opacity: 1; }
+  .exam-card:hover {
+    border-color: var(--cyan3);
+    transform: translateY(-8px);
+    z-index: 2;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,255,0.1);
+  }
+  .exam-card.red-card:hover::after {
+    background: linear-gradient(135deg, var(--red-glow), transparent);
+  }
+  .exam-card.red-card:hover { border-color: var(--red2); box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(255,23,68,0.1); }
+  .exam-icon {
+    font-size: 48px;
+    margin-bottom: 24px;
+    display: block;
+    position: relative; z-index: 1;
+    transition: transform 0.5s;
+    filter: drop-shadow(0 0 10px var(--cyan));
+  }
+  .exam-card.red-card .exam-icon { filter: drop-shadow(0 0 10px var(--red)); }
+  .exam-card:hover .exam-icon { transform: scale(1.15) rotate(-5deg); }
+  .exam-card h3 {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--white);
+    margin-bottom: 12px;
+    position: relative; z-index: 1;
+  }
+  .exam-card p {
+    font-size: 14px;
+    color: var(--gray3);
+    line-height: 1.7;
+    position: relative; z-index: 1;
+    margin-bottom: 20px;
+  }
+  .exam-card .learn-more {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+    transition: gap 0.3s;
+    position: relative; z-index: 1;
+    cursor: pointer;
+    border: none; background: none;
+  }
+  .exam-card.red-card .learn-more { color: var(--red); }
+  .exam-card:hover .learn-more { gap: 16px; }
+  .exam-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 10px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .tag-cyan { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid var(--cyan3); }
+  .tag-red { background: rgba(255,23,68,0.1); color: var(--red); border: 1px solid var(--red2); }
+
+  /* ─── EXAM MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(8px);
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: var(--dark2);
+    border: 1px solid var(--cyan3);
+    max-width: 760px; width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 48px;
+    position: relative;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.3s;
+  }
+  .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none;
+    color: var(--gray3); font-size: 24px; cursor: pointer;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--red); }
+  .modal-title {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 8px;
+  }
+  .modal-content { margin-top: 24px; }
+  .modal-content h4 {
+    font-family: var(--font-head);
+    font-size: 13px;
+    color: var(--white);
+    letter-spacing: 2px;
+    margin: 24px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray);
+  }
+  .modal-content p, .modal-content li {
+    color: var(--gray3);
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 8px;
+  }
+  .modal-content ul { padding-left: 20px; }
+  .modal-content .alert {
+    background: rgba(255,23,68,0.08);
+    border-left: 3px solid var(--red);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--white2);
+  }
+  .modal-content .tip {
+    background: rgba(0,229,255,0.06);
+    border-left: 3px solid var(--cyan);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--white2);
+  }
+
+  /* ─── CONTRASTE SECTION ─── */
+  #contraste {
+    background: var(--dark2);
+    padding: 100px 40px;
+    max-width: 100%;
+    border-top: 1px solid var(--gray);
+    border-bottom: 1px solid var(--gray);
+  }
+  #contraste > div { max-width: 1300px; margin: 0 auto; }
+  .contraste-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 64px;
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 24px;
+  }
+  .compare-table th {
+    background: var(--gray);
+    color: var(--cyan);
+    font-family: var(--font-head);
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 14px 20px;
+    text-align: left;
+  }
+  .compare-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--gray);
+    font-size: 14px;
+    color: var(--gray3);
+  }
+  .compare-table tr:hover td { background: rgba(0,229,255,0.03); color: var(--white2); }
+  .compare-table .tag-sp { color: var(--cyan); font-weight: 600; }
+  .compare-table .tag-rj { color: var(--red); font-weight: 600; }
+
+  .triagem-steps {
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .triagem-step {
+    display: flex; gap: 24px; align-items: flex-start;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--gray);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .triagem-step:hover { padding-left: 12px; }
+  .step-num {
+    font-family: var(--font-head);
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--gray2);
+    min-width: 40px;
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  .triagem-step:hover .step-num { color: var(--cyan); }
+  .step-content h4 {
+    font-family: var(--font-head);
+    font-size: 13px;
+    color: var(--white);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .step-content p { font-size: 14px; color: var(--gray3); line-height: 1.6; }
+  .step-badge {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 10px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  /* ─── CINTILOGRAFIA ─── */
+  #cintilografia { max-width: 1300px; margin: 0 auto; padding: 100px 40px; }
+  .cintil-tabs {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--gray);
+    margin: 40px 0 0;
+    overflow-x: auto;
+  }
+  .cintil-tab {
+    font-family: var(--font-head);
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 16px 28px;
+    cursor: pointer;
+    color: var(--gray3);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.3s;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+  }
+  .cintil-tab.active {
+    color: var(--cyan);
+    border-bottom-color: var(--cyan);
+  }
+  .cintil-tab:hover { color: var(--white2); }
+  .cintil-panels { margin-top: 48px; }
+  .cintil-panel { display: none; }
+  .cintil-panel.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .cintil-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .cintil-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    filter: saturate(0.7) brightness(0.8);
+    transition: filter 0.4s;
+    display: block;
+  }
+  .cintil-img:hover { filter: saturate(1) brightness(1); }
+  .cintil-info h3 {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+  .cintil-info p { font-size: 15px; color: var(--gray3); line-height: 1.8; margin-bottom: 16px; }
+  .cintil-spec {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-top: 24px;
+  }
+  .spec-item {
+    background: var(--dark2);
+    border: 1px solid var(--gray);
+    padding: 16px;
+    transition: border-color 0.3s;
+  }
+  .spec-item:hover { border-color: var(--cyan3); }
+  .spec-key {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .spec-val { font-size: 14px; color: var(--white2); font-weight: 600; }
+
+  /* ─── CASO ROSE MEIRE ─── */
+  #rosecase {
+    background: linear-gradient(180deg, var(--black) 0%, var(--dark2) 50%, var(--black) 100%);
+    padding: 100px 40px;
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  #rosecase::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
+    top: 50%; left: 20%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  #rosecase > div { max-width: 1300px; margin: 0 auto; }
+  .case-header {
+    display: flex; align-items: flex-start; gap: 48px;
+    margin-bottom: 64px;
+  }
+  .case-badge-big {
+    background: var(--red);
+    color: white;
+    font-family: var(--font-head);
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 16px 24px;
+    writing-mode: vertical-rl;
+    text-transform: uppercase;
+    white-space: nowrap;
+    min-height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .case-intro { flex: 1; }
+  .case-intro .patient-name {
+    font-family: var(--font-head);
+    font-size: clamp(32px, 6vw, 72px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .case-intro .patient-name span { color: var(--cyan); }
+  .case-intro p { font-size: 17px; color: var(--gray3); line-height: 1.7; max-width: 560px; }
+
+  .call-script {
+    background: var(--dark2);
+    border: 1px solid var(--gray);
+    padding: 0;
+    overflow: hidden;
+    margin-top: 48px;
+  }
+  .call-header {
+    background: var(--gray);
+    padding: 16px 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .call-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .call-dot-r { background: var(--red); }
+  .call-dot-y { background: #ffb300; }
+  .call-dot-g { background: #00e676; }
+  .call-header span {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gray3);
+    margin-left: auto;
+  }
+  .call-body { padding: 32px 28px; }
+  .call-step {
+    display: flex; gap: 20px;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s;
+    cursor: pointer;
+  }
+  .call-step.revealed {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .call-step-num {
+    font-family: var(--font-head);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 1px;
+    min-width: 32px;
+    margin-top: 4px;
+  }
+  .call-step-content { flex: 1; }
+  .call-step-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--gray3);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .call-step-text {
+    background: var(--dark3);
+    border-left: 2px solid var(--cyan);
+    padding: 16px 20px;
+    font-size: 15px;
+    color: var(--white2);
+    line-height: 1.7;
+    font-family: var(--font-body);
+    font-style: italic;
+  }
+  .call-step-text.alert-step { border-left-color: var(--red); }
+  .call-step-note {
+    font-size: 12px;
+    color: var(--gray3);
+    margin-top: 8px;
+    padding-left: 4px;
+  }
+  .call-step-note .ok { color: #00e676; }
+  .call-step-note .warn { color: #ffb300; }
+  .call-reveal-btn {
+    display: block;
+    background: var(--cyan);
+    color: var(--black);
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border: none; cursor: pointer;
+    margin: 0 auto;
+    transition: all 0.3s;
+  }
+  .call-reveal-btn:hover { background: var(--white); transform: scale(1.03); }
+
+  /* ─── PILARES DASA ─── */
+  #pilares { max-width: 1300px; margin: 0 auto; padding: 100px 40px; }
+  .pilares-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 64px;
+  }
+  .pilar-card {
+    background: var(--dark2);
+    padding: 48px 32px;
+    text-align: center;
+    transition: all 0.5s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .pilar-card::before {
+    content: attr(data-num);
+    position: absolute;
+    font-family: var(--font-head);
+    font-size: 100px;
+    font-weight: 900;
+    color: rgba(0,229,255,0.03);
+    top: -10px; right: -10px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .pilar-card:hover {
+    background: var(--dark3);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,229,255,0.08);
+  }
+  .pilar-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
+    transition: transform 0.4s;
+  }
+  .pilar-card:hover .pilar-icon { transform: scale(1.2) rotate(5deg); }
+  .pilar-card h3 {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .pilar-card p { font-size: 14px; color: var(--gray3); line-height: 1.7; }
+
+  /* ─── TÉCNICAS DE VENDAS ─── */
+  #vendas {
+    background: var(--dark2);
+    padding: 100px 40px;
+    max-width: 100%;
+    border-top: 1px solid var(--gray);
+    border-bottom: 1px solid var(--gray);
+  }
+  #vendas > div { max-width: 1300px; margin: 0 auto; }
+  .vendas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-top: 64px;
+  }
+  .vendas-col h3 {
+    font-family: var(--font-head);
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 14px 20px;
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+  .vendas-col.assertivos h3 { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid var(--cyan3); }
+  .vendas-col.melhoria h3 { background: rgba(255,179,0,0.1); color: #ffb300; border: 1px solid #7a5500; }
+  .vendas-col.tecnicas h3 { background: rgba(255,23,68,0.1); color: var(--red); border: 1px solid var(--red2); }
+  .vendas-items { border: 1px solid var(--gray); border-top: none; }
+  .vendas-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--gray);
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 14px;
+    color: var(--gray3);
+    transition: all 0.3s;
+  }
+  .vendas-item:last-child { border-bottom: none; }
+  .vendas-item:hover { background: var(--dark3); color: var(--white2); }
+  .item-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+  .dot-cyan { background: var(--cyan); }
+  .dot-yellow { background: #ffb300; }
+  .dot-red { background: var(--red); }
+
+  /* ─── REGRAS SP VS RJ ─── */
+  #regras { max-width: 1300px; margin: 0 auto; padding: 100px 40px; }
+  .regras-toggle {
+    display: flex;
+    background: var(--dark2);
+    border: 1px solid var(--gray);
+    overflow: hidden;
+    margin-top: 40px;
+    width: fit-content;
+  }
+  .regra-btn {
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 14px 40px;
+    border: none; cursor: pointer;
+    background: none;
+    color: var(--gray3);
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+  .regra-btn.active-sp { background: var(--cyan); color: var(--black); }
+  .regra-btn.active-rj { background: var(--red); color: var(--white); }
+  .regras-content {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .regra-section h4 {
+    font-family: var(--font-head);
+    font-size: 13px;
+    color: var(--white);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--gray);
+  }
+  .regra-list { list-style: none; }
+  .regra-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+    color: var(--gray3);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .regra-list li::before {
+    content: '›';
+    color: var(--cyan);
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  #sp-panel, #rj-panel { display: none; }
+  #sp-panel.active, #rj-panel.active { display: grid; }
+
+  /* ─── QUIZ INTERATIVO ─── */
+  #quiz {
+    background: var(--dark2);
+    padding: 100px 40px;
+    max-width: 100%;
+    border-top: 1px solid var(--gray);
+  }
+  #quiz > div { max-width: 800px; margin: 0 auto; text-align: center; }
+  .quiz-box {
+    background: var(--dark3);
+    border: 1px solid var(--gray);
+    padding: 48px;
+    margin-top: 48px;
+    text-align: left;
+  }
+  .quiz-progress {
+    display: flex; gap: 4px; margin-bottom: 32px;
+  }
+  .qp-bar {
+    height: 3px;
+    flex: 1;
+    background: var(--gray);
+    transition: background 0.3s;
+  }
+  .qp-bar.done { background: var(--cyan); }
+  .qp-bar.current { background: var(--cyan); opacity: 0.5; }
+  .quiz-question {
+    font-family: var(--font-head);
+    font-size: 16px;
+    color: var(--white);
+    line-height: 1.5;
+    margin-bottom: 32px;
+    letter-spacing: 0.5px;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 12px; }
+  .quiz-opt {
+    background: var(--dark2);
+    border: 1px solid var(--gray);
+    padding: 16px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray3);
+    transition: all 0.3s;
+    text-align: left;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .quiz-opt:hover:not(.disabled) { border-color: var(--cyan3); color: var(--white); background: var(--gray); }
+  .quiz-opt.correct { border-color: #00e676; background: rgba(0,230,118,0.08); color: #00e676; }
+  .quiz-opt.wrong { border-color: var(--red); background: rgba(255,23,68,0.08); color: var(--red); }
+  .quiz-opt.disabled { cursor: default; }
+  .opt-letter {
+    font-family: var(--font-head);
+    font-size: 11px;
+    color: var(--cyan);
+    min-width: 20px;
+  }
+  .quiz-feedback {
+    margin-top: 20px;
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    display: none;
+  }
+  .quiz-feedback.correct { background: rgba(0,230,118,0.08); border-left: 3px solid #00e676; color: #00e676; }
+  .quiz-feedback.wrong { background: rgba(255,23,68,0.08); border-left: 3px solid var(--red); color: var(--red); }
+  .quiz-next {
+    margin-top: 20px;
+    background: var(--cyan);
+    color: var(--black);
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 12px 28px;
+    border: none; cursor: pointer;
+    display: none;
+    transition: all 0.3s;
+  }
+  .quiz-next:hover { background: var(--white); }
+  .quiz-score {
+    text-align: center;
+    padding: 40px;
+    display: none;
+  }
+  .quiz-score .score-num {
+    font-family: var(--font-head);
+    font-size: 72px;
+    font-weight: 900;
+    color: var(--cyan);
+  }
+  .quiz-score p { color: var(--gray3); font-size: 16px; margin-top: 16px; }
+  .quiz-restart {
+    margin-top: 24px;
+    background: none;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: var(--font-head);
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .quiz-restart:hover { background: var(--cyan); color: var(--black); }
+
+  /* ─── GLOSSARY ─── */
+  #glossario { max-width: 1300px; margin: 0 auto; padding: 100px 40px; }
+  .glossary-search {
+    display: flex;
+    border: 1px solid var(--gray);
+    overflow: hidden;
+    margin: 40px 0 32px;
+  }
+  .glossary-search input {
+    flex: 1;
+    background: var(--dark2);
+    border: none;
+    padding: 14px 20px;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 15px;
+    outline: none;
+  }
+  .glossary-search input::placeholder { color: var(--gray3); }
+  .glossary-search button {
+    background: var(--cyan);
+    border: none;
+    padding: 14px 24px;
+    cursor: pointer;
+    color: var(--black);
+    font-size: 18px;
+  }
+  .glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .gloss-card {
+    background: var(--dark2);
+    border: 1px solid var(--gray);
+    padding: 24px;
+    transition: all 0.3s;
+  }
+  .gloss-card:hover { border-color: var(--cyan3); transform: translateY(-3px); }
+  .gloss-term {
+    font-family: var(--font-head);
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .gloss-def { font-size: 13px; color: var(--gray3); line-height: 1.6; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--dark2);
+    border-top: 1px solid var(--gray);
+    padding: 60px 40px 32px;
+  }
+  .footer-inner {
+    max-width: 1300px; margin: 0 auto;
+    display: grid; grid-template-columns: 2fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 48px;
+  }
+  .footer-brand .brand-name {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+  }
+  .footer-brand p { font-size: 13px; color: var(--gray3); line-height: 1.7; }
+  .footer-col h4 {
+    font-family: var(--font-head);
+    font-size: 11px;
+    color: var(--white);
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li {
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--gray3);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  .footer-col li:hover { color: var(--cyan); }
+  .footer-bottom {
+    max-width: 1300px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid var(--gray);
+  }
+  .footer-bottom p { font-size: 12px; color: var(--gray3); letter-spacing: 1px; }
+  .footer-bottom .equipe-badge {
+    font-family: var(--font-head);
+    font-size: 11px;
+    background: var(--red);
+    color: white;
+    padding: 6px 16px;
+    letter-spacing: 2px;
+  }
+
+  /* ─── FLOATING PARTICLES ─── */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 50%;
+    animation: floatParticle linear infinite;
+    opacity: 0;
+  }
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ─── LOADING SCREEN ─── */
+  #loader {
+    position: fixed; inset: 0;
+    background: var(--black);
+    z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 24px;
+    transition: opacity 0.6s, visibility 0.6s;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; }
+  .loader-logo {
+    font-family: var(--font-head);
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--cyan);
+    letter-spacing: 6px;
+    animation: loaderPulse 1s ease-in-out infinite;
+  }
+  @keyframes loaderPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .loader-bar-wrap {
+    width: 200px;
+    height: 2px;
+    background: var(--gray);
+    overflow: hidden;
+  }
+  .loader-bar {
+    height: 100%;
+    background: var(--cyan);
+    width: 0%;
+    animation: loadFill 1.8s ease forwards;
+    box-shadow: 0 0 10px var(--cyan);
+  }
+  @keyframes loadFill { to { width: 100%; } }
+  .loader-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--gray3);
+    letter-spacing: 3px;
+    animation: loaderText 1.8s steps(3) infinite;
+  }
+  @keyframes loaderText {
+    0% { content: 'CARREGANDO'; }
+    33% { content: 'CARREGANDO.'; }
+    66% { content: 'CARREGANDO..'; }
+    100% { content: 'CARREGANDO...'; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section, #exames, #cintilografia, #pilares, #glossario, #regras, #vendas > div, #rosecase > div, #contraste > div { padding: 60px 20px; }
+    .intro-grid, .contraste-grid, .cintil-content-grid, .vendas-grid { grid-template-columns: 1fr; gap: 40px; }
+    .pilares-grid { grid-template-columns: 1fr 1fr; }
+    .regras-content { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+    .hero-stats { gap: 24px; }
+    .call-header { flex-wrap: wrap; }
+    .exames-grid { grid-template-columns: 1fr; }
+    .case-header { flex-direction: column; }
+    .case-badge-big { writing-mode: horizontal-tb; min-height: auto; padding: 12px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">DASA // MN</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">INICIALIZANDO SISTEMA</div>
+</div>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero">DASA // <span>NUCLEAR</span></a>
+  <ul class="nav-links">
+    <li><a href="#intro">Sobre</a></li>
+    <li><a href="#exames">Exames</a></li>
+    <li><a href="#cintilografia">Cintilografia</a></li>
+    <li><a href="#rosecase">Caso Rose</a></li>
+    <li><a href="#vendas">Técnicas</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+  </ul>
+  <span class="nav-badge">BKO</span>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-grid"></div>
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag">▸ BACKOFFICE ATIVO / DASA / 2025</div>
+    <h1 class="hero-title">
+      <span class="line1">MEDICINA</span>
+      <span class="line2">NUCLEAR</span>
+    </h1>
+    <p class="hero-sub">A área mais "complexa e sensível" da medicina diagnóstica</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" data-count="4">0</span>
+        <span class="stat-label">Modalidades</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num red" data-count="100">0</span>
+        <span class="stat-label">% Triagem obrigatória</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="6">0</span>
+        <span class="stat-label">Horas (cintilografia)</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num red" data-count="3">0</span>
+        <span class="stat-label">Pilares de atendimento</span>
+      </div>
+    </div>
+    <div class="hero-btns">
+      <a href="#exames" class="btn-primary">Explorar Exames</a>
+      <a href="#rosecase" class="btn-outline">Ver Caso Rose Meire</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>scroll</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INTRO -->
+<section id="intro">
+  <div class="intro-grid">
+    <div class="intro-visual">
+      <div class="atom-container">
+        <div class="orbit orbit-1"><div class="orbit-dot"></div></div>
+        <div class="orbit orbit-2"><div class="orbit-dot" style="background:var(--cyan)"></div></div>
+        <div class="orbit orbit-3"><div class="orbit-dot"></div></div>
+        <div class="atom-nucleus">Tc-99m</div>
+      </div>
+    </div>
+    <div>
+      <span class="section-label">// 01 - FUNDAMENTOS</span>
+      <h2 class="section-title">O que é<br><span>Medicina Nuclear</span>?</h2>
+      <div class="info-cards">
+        <div class="info-card reveal">
+          <div class="info-card-num">01 // DEFINIÇÃO</div>
+          <h3>Especialidade Única</h3>
+          <p>A Medicina Nuclear é uma especialidade médica que utiliza quantidades mínimas de radiação, por meio de radiofármacos (substâncias emissoras de radiação), para realizar exames diagnósticos, tratamentos terapêuticos e auxiliar procedimentos cirúrgicos.</p>
+        </div>
+        <div class="info-card reveal reveal-delay-1">
+          <div class="info-card-num">02 // DIFERENCIAL</div>
+          <h3>Avalia Função, não apenas Estrutura</h3>
+          <p>Enquanto TC e RM mostram a anatomia dos órgãos, a Medicina Nuclear avalia seu funcionamento metabólico - detectando alterações funcionais antes mesmo de aparecerem morfologicamente.</p>
+        </div>
+        <div class="info-card reveal reveal-delay-2">
+          <div class="info-card-num">03 // COMPLEXIDADE</div>
+          <h3>A Área Mais Cara e Sensível</h3>
+          <p>Por envolver radiofármacos manipulados especificamente para cada paciente, radiação e equipamentos de altíssima tecnologia, a Medicina Nuclear exige protocolo rigoroso de triagem, atendimento humanizado e comunicação precisa.</p>
+        </div>
+        <div class="info-card reveal reveal-delay-3">
+          <div class="info-card-num">04 // COBERTURA DASA</div>
+          <h3>SP e RJ - Marcas DASA</h3>
+          <p>Disponível nas marcas Delboni Auriemo, Alta Diagnósticos, Bronstein, CDPI RJ, Multimagem, Lâmina - com regras específicas para cada praça.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EXAMES -->
+<section id="exames" style="padding:100px 40px; max-width:1300px; margin:0 auto;">
+  <span class="section-label">// 02 - MODALIDADES</span>
+  <h2 class="section-title">Exames de<br><span>Alta Complexidade</span></h2>
+  <p class="section-desc">Conheça cada modalidade, suas indicações, regras de triagem e protocolos de segurança. Clique em um card para ver todos os detalhes.</p>
+  <div class="exames-grid reveal">
+    <!-- TC -->
+    <div class="exam-card" onclick="openModal('tc')">
+      <span class="exam-tag tag-cyan">ALTA COMPLEXIDADE</span>
+      <span class="exam-icon">🔬</span>
+      <h3>Tomografia Computadorizada</h3>
+      <p>Utiliza raio-X para captar imagens em "fatias" do corpo com altíssima resolução. Pode ser realizada com ou sem contraste iodado.</p>
+      <button class="learn-more">Ver detalhes → </button>
+    </div>
+    <!-- RM -->
+    <div class="exam-card" onclick="openModal('rm')">
+      <span class="exam-tag tag-cyan">SEM RADIAÇÃO</span>
+      <span class="exam-icon">🧲</span>
+      <h3>Ressonância Magnética</h3>
+      <p>Utiliza campo magnético potente. Não usa radiação, mas exige cuidados com objetos metálicos, marca-passo e implantes.</p>
+      <button class="learn-more">Ver detalhes → </button>
+    </div>
+    <!-- PET-CT -->
+    <div class="exam-card red-card" onclick="openModal('petct')">
+      <span class="exam-tag tag-red">MEDICINA NUCLEAR</span>
+      <span class="exam-icon">⚛️</span>
+      <h3>PET-CT</h3>
+      <p>Combinação de tomografia com medicina nuclear. Detecta tumores, metástases e avaliação oncológica com altíssima precisão.</p>
+      <button class="learn-more" style="color:var(--red)">Ver detalhes → </button>
+    </div>
+    <!-- Cintilografia -->
+    <div class="exam-card red-card" onclick="openModal('cintil')">
+      <span class="exam-tag tag-red">RADIOFÁRMACO</span>
+      <span class="exam-icon">🫀</span>
+      <h3>Cintilografia</h3>
+      <p>Administra radiofármaco ao paciente e capta a emissão de radiação para avaliar funcionamento de órgãos como coração, rins e ossos.</p>
+      <button class="learn-more" style="color:var(--red)">Ver detalhes → </button>
+    </div>
+    <!-- Angio TC/RM -->
+    <div class="exam-card" onclick="openModal('angio')">
+      <span class="exam-tag tag-cyan">VASCULAR</span>
+      <span class="exam-icon">🩸</span>
+      <h3>Angio TC / Angio RM</h3>
+      <p>Método não invasivo para visualizar artérias e veias do corpo. Avalia vasos sanguíneos com precisão diagnóstica excepcional.</p>
+      <button class="learn-more">Ver detalhes → </button>
+    </div>
+    <!-- Sedação -->
+    <div class="exam-card" onclick="openModal('sedacao')">
+      <span class="exam-tag tag-cyan">PROTOCOLO</span>
+      <span class="exam-icon">💉</span>
+      <h3>Sedação / Anestesia</h3>
+      <p>Necessária em casos de imobilidade total durante o exame. Requer pedido médico específico, exames pré-anestésicos e sala exclusiva.</p>
+      <button class="learn-more">Ver detalhes → </button>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL SYSTEM -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-inner"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONTRASTE -->
+<div id="contraste">
+  <div>
+    <span class="section-label">// 03 - PROTOCOLOS</span>
+    <h2 class="section-title">Contraste & <span>Triagem de Segurança</span></h2>
+    <div class="contraste-grid">
+      <div>
+        <h3 style="font-family:var(--font-head);font-size:18px;margin-bottom:20px;color:var(--white);letter-spacing:1px;">Tipos de Contraste</h3>
+        <table class="compare-table">
+          <tr>
+            <th>Exame</th>
+            <th>Contraste</th>
+            <th>Via</th>
+          </tr>
+          <tr><td>Tomografia</td><td>Iodo (Iodado)</td><td>Intravenosa</td></tr>
+          <tr><td>Ressonância Magnética</td><td>Gadolínio</td><td>Intravenosa</td></tr>
+          <tr><td>Cintilografia</td><td>Radiofármaco</td><td>Intravenosa</td></tr>
+          <tr><td>Angio TC/RM</td><td>Iodado/Gadolínio</td><td>Intravenosa</td></tr>
+        </table>
+        <div style="margin-top:32px;">
+          <h3 style="font-family:var(--font-head);font-size:16px;margin-bottom:16px;color:var(--white);letter-spacing:1px;">Regras por Praça</h3>
+          <table class="compare-table">
+            <tr><th>Praça</th><th>Regra do Contraste</th></tr>
+            <tr><td><span class="tag-sp">SÃO PAULO</span></td><td>Já incluso no valor do procedimento (convênio e particular)</td></tr>
+            <tr><td><span class="tag-rj">BRONSTEIN RJ</span></td><td>Cobrado separadamente</td></tr>
+            <tr><td><span class="tag-rj">CDPI RJ</span></td><td>Cobrado separadamente</td></tr>
+            <tr><td><span class="tag-rj">MULTIMAGEM RJ</span></td><td>Cobrado separadamente</td></tr>
+            <tr><td><span class="tag-rj">ALTA RJ</span></td><td>Cobrado separadamente</td></tr>
+            <tr><td><span class="tag-cyan">CDPI NITERÓI</span></td><td>Não é necessário cobrar</td></tr>
+            <tr><td><span class="tag-cyan">LÂMINA</span></td><td>Não é necessário cobrar</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family:var(--font-head);font-size:18px;margin-bottom:20px;color:var(--white);letter-spacing:1px;">Triagem de Segurança Obrigatória</h3>
+        <div class="triagem-steps">
+          <div class="triagem-step reveal">
+            <span class="step-num">01</span>
+            <div class="step-content">
+              <h4>Alergia a Contraste ou Iodo?</h4>
+              <p>Identificar histórico de reações alérgicas a substâncias iodadas ou ao gadolínio. Em caso positivo, orientar contato médico para medicação preventiva.</p>
+            </div>
+            <span class="step-badge tag-cyan">CRÍTICO</span>
+          </div>
+          <div class="triagem-step reveal reveal-delay-1">
+            <span class="step-num">02</span>
+            <div class="step-content">
+              <h4>Realizou este exame antes?</h4>
+              <p>Verificar histórico de reações anteriores e solicitar laudos anteriores da região a ser examinada.</p>
+            </div>
+            <span class="step-badge tag-cyan">IMPORTANTE</span>
+          </div>
+          <div class="triagem-step reveal reveal-delay-2">
+            <span class="step-num">03</span>
+            <div class="step-content">
+              <h4>Usa medicamento contínuo ou tem problema renal?</h4>
+              <p>Metformina deve ser suspensa antes do contraste iodado. Insuficiência renal pode contraindicar o uso de contraste.</p>
+            </div>
+            <span class="step-badge tag-red">⚠ ALERTA</span>
+          </div>
+          <div class="triagem-step reveal reveal-delay-3">
+            <span class="step-num">04</span>
+            <div class="step-content">
+              <h4>Tem marca-passo ou implante metálico?</h4>
+              <p>Para ressonância: marca-passo, clipes para aneurisma, stent cardíaco, válvulas metálicas e próteses auditivas fixas exigem avaliação prévia.</p>
+            </div>
+            <span class="step-badge tag-red">⚠ ALERTA</span>
+          </div>
+          <div class="triagem-step reveal">
+            <span class="step-num">05</span>
+            <div class="step-content">
+              <h4>Restrições de Jejum</h4>
+              <p>Com anestesia/sedação: jejum de 8h (adultos). Crianças até 3 anos: 6h. Crianças que ingeriam leite materno: 4h.</p>
+            </div>
+            <span class="step-badge tag-cyan">PREPARO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CINTILOGRAFIA -->
+<section id="cintilografia">
+  <span class="section-label">// 04 - MEDICINA NUCLEAR</span>
+  <h2 class="section-title">Cintilografia - <span>Modalidades</span></h2>
+  <p class="section-desc">A cintilografia envolve a administração de radiofármacos para avaliação funcional dos órgãos. O radiofármaco é manipulado na véspera do exame, sendo de uso pessoal e intransferível.</p>
+
+  <div class="cintil-tabs">
+    <button class="cintil-tab active" onclick="showTab('miocardio',this)">Miocárdio</button>
+    <button class="cintil-tab" onclick="showTab('renal',this)">Renal</button>
+    <button class="cintil-tab" onclick="showTab('ossea',this)">Óssea</button>
+    <button class="cintil-tab" onclick="showTab('refluxo',this)">Refluxo</button>
+    <button class="cintil-tab" onclick="showTab('gastrico',this)">Esvaziamento</button>
+    <button class="cintil-tab" onclick="showTab('galio',this)">Gálio 67</button>
+  </div>
+
+  <div class="cintil-panels">
+    <div class="cintil-panel active" id="tab-miocardio">
+      <div class="cintil-content-grid">
+        <img class="cintil-img" src="https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?w=600&h=340&fit=crop" alt="Cintilografia do Miocárdio">
+        <div class="cintil-info">
+          <h3>Cintilografia do Miocárdio</h3>
+          <p>Avalia o fluxo sanguíneo nas artérias que nutrem o músculo cardíaco, detectando possíveis falhas na irrigação de regiões do coração. Realizada em repouso e esforço (esteira).</p>
+          <p>Existem variações: CMRE (esteira), CMDI (Dipiridamol) e CMDO (Dobutamina) - para pacientes que não conseguem realizar esforço físico.</p>
+          <div class="cintil-spec">
+            <div class="spec-item"><div class="spec-key">DURAÇÃO</div><div class="spec-val">≈ 6 horas</div></div>
+            <div class="spec-item"><div class="spec-key">RADIOFÁRMACO</div><div class="spec-val">Cardiolite / 99mTc</div></div>
+            <div class="spec-item"><div class="spec-key">ESFORÇO</div><div class="spec-val">Esteira (não bicicleta)</div></div>
+            <div class="spec-item"><div class="spec-key">INTERVALO</div><div class="spec-val">2-3 dias entre cintils.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cintil-panel" id="tab-renal">
+      <div class="cintil-content-grid">
+        <img class="cintil-img" src="https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&h=340&fit=crop" alt="Cintilografia Renal">
+        <div class="cintil-info">
+          <h3>Cintilografia Renal</h3>
+          <p>Administração intravenosa de fármaco para estimular formação de urina. São obtidas imagens dos rins para avaliação funcional e morfológica. O paciente aguarda 5 horas entre a injeção e a aquisição das imagens.</p>
+          <div class="cintil-spec">
+            <div class="spec-item"><div class="spec-key">DURAÇÃO</div><div class="spec-val">≈ 6 horas</div></div>
+            <div class="spec-item"><div class="spec-key">RADIOFÁRMACO</div><div class="spec-val">DMSA / 99mTc</div></div>
+            <div class="spec-item"><div class="spec-key">ESPERA</div><div class="spec-val">5h fora da unidade</div></div>
+            <div class="spec-item"><div class="spec-key">ATENÇÃO</div><div class="spec-val">Com CAPTOPRIL → Retorno</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cintil-panel" id="tab-ossea">
+      <div class="cintil-content-grid">
+        <img class="cintil-img" src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=340&fit=crop" alt="Cintilografia Óssea">
+        <div class="cintil-info">
+          <h3>Cintilografia Óssea Corpo Total</h3>
+          <p>Exame para investigar localização de tumores, progressão de doenças e metástases. Mede com rapidez e precisão a densidade e metabolismo dos ossos em todo o corpo.</p>
+          <div class="cintil-spec">
+            <div class="spec-item"><div class="spec-key">DURAÇÃO</div><div class="spec-val">≈ 3 horas</div></div>
+            <div class="spec-item"><div class="spec-key">RADIOFÁRMACO</div><div class="spec-val">MDP / 99mTc</div></div>
+            <div class="spec-item"><div class="spec-key">ESPERA</div><div class="spec-val">2h fora da unidade</div></div>
+            <div class="spec-item"><div class="spec-key">COM FLUXO</div><div class="spec-val">Agendar MAOC + MAFO</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cintil-panel" id="tab-refluxo">
+      <div class="cintil-content-grid">
+        <img class="cintil-img" src="https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=600&h=340&fit=crop" alt="Cintilografia Refluxo">
+        <div class="cintil-info">
+          <h3>Cintilografia - Refluxo Gastro-Esofágico</h3>
+          <p>Avalia presença de refluxo do estômago para o esôfago. O material radioativo é misturado ao alimento trazido pelo próprio paciente. Não provoca reação adversa. Sugestão: levar brinquedos para crianças.</p>
+          <div class="cintil-spec">
+            <div class="spec-item"><div class="spec-key">RADIOFÁRMACO</div><div class="spec-val">Estanho Coloidal / 99mTc</div></div>
+            <div class="spec-item"><div class="spec-key">ALIMENTO</div><div class="spec-val">Trazido pelo paciente</div></div>
+            <div class="spec-item"><div class="spec-key">ATENÇÃO</div><div class="spec-val">Só por cintilografia</div></div>
+            <div class="spec-item"><div class="spec-key">PÚBLICO</div><div class="spec-val">Adultos e crianças</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cintil-panel" id="tab-gastrico">
+      <div class="cintil-content-grid">
+        <img class="cintil-img" src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=340&fit=crop" alt="Esvaziamento Gástrico">
+        <div class="cintil-info">
+          <h3>Cintilografia - Esvaziamento Gástrico</h3>
+          <p>Avalia a função gástrica usando radioisótopo para identificar doenças que causam sintomas digestivos. Este exame é uma continuação do MRGE - só é agendado após o Refluxo.</p>
+          <div class="cintil-spec">
+            <div class="spec-item"><div class="spec-key">TIPO LÍQUIDO</div><div class="spec-val">Crianças até 7a11m</div></div>
+            <div class="spec-item"><div class="spec-key">SEQUÊNCIA</div><div class="spec-val">Após o Refluxo</div></div>
+            <div class="spec-item"><div class="spec-key">MATERIAL</div><div class="spec-val">Mesmo do RGE</div></div>
+            <div class="spec-item"><div class="spec-key">ELIMINAÇÃO</div><div class="spec-val">Via urina</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cintil-panel" id="tab-galio">
+      <div class="cintil-content-grid">
+        <img class="cintil-img" src="https://images.unsplash.com/photo-1563213126-a4273aed2016?w=600&h=340&fit=crop" alt="Cintilografia Gálio 67">
+        <div class="cintil-info">
+          <h3>Cintilografia com Gálio 67</h3>
+          <p>Método efetivo e indolor de rastrear focos de infecção/inflamação e alguns tipos de tumores. Utiliza mapeamento de corpo inteiro com imagens focalizadas na área de interesse. Agendado pelo setor de Medicina Nuclear.</p>
+          <div class="cintil-spec">
+            <div class="spec-item"><div class="spec-key">AGENDAMENTO</div><div class="spec-val">Via Retorno MN</div></div>
+            <div class="spec-item"><div class="spec-key">UNIDADE</div><div class="spec-val">Hosp. Santa Paula</div></div>
+            <div class="spec-item"><div class="spec-key">IDADE MÍN.</div><div class="spec-val">Acima de 12 anos</div></div>
+            <div class="spec-item"><div class="spec-key">COBERTURA</div><div class="spec-val">Verificar convênio</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px; background:rgba(255,23,68,0.07); border:1px solid var(--red2); padding:28px 32px;">
+    <p style="font-family:var(--font-head);font-size:13px;color:var(--red);letter-spacing:2px;margin-bottom:8px;">⚠ ATENÇÃO CRÍTICA - CANCELAMENTO</p>
+    <p style="font-size:14px;color:var(--white2);line-height:1.7;">Como o radiofármaco é <strong>manipulado e fabricado na véspera do exame</strong>, sendo de uso <strong>pessoal e intransferível</strong>, pedimos encarecidamente que em momentos de desistência o paciente contate a central de agendamento <strong>(3049-6999)</strong> e solicite o cancelamento com antecedência.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CASO ROSE MEIRE -->
+<div id="rosecase">
+  <div>
+    <div class="case-header reveal">
+      <div class="case-badge-big">CASO CLÍNICO</div>
+      <div class="case-intro">
+        <div class="patient-name">Dona <span>Rose Meire</span></div>
+        <p>Backoffice ativo - Confirmação de exame agendado. Tomografia do Abdômen com Contraste. A triagem obrigatória identifica uma alergia declarada ao contraste. Protocolo de segurança completo em ação.</p>
+        <div style="display:flex;gap:16px;margin-top:24px;flex-wrap:wrap;">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--cyan);border:1px solid var(--cyan3);padding:6px 14px;">TC ABDÔMEN COM CONTRASTE</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--gray3);border:1px solid var(--gray);padding:6px 14px;">62 ANOS</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--red);border:1px solid var(--red2);padding:6px 14px;">⚠ ALERGIA DECLARADA</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALL SCRIPT INTERATIVO -->
+    <div class="call-script reveal">
+      <div class="call-header">
+        <div class="call-dot call-dot-r"></div>
+        <div class="call-dot call-dot-y"></div>
+        <div class="call-dot call-dot-g"></div>
+        <span>CENTRAL DE ATENDIMENTO DASA // GRAVAÇÃO EM ANDAMENTO</span>
+      </div>
+      <div class="call-body">
+        <div class="call-step revealed" id="cs1">
+          <span class="call-step-num">01</span>
+          <div class="call-step-content">
+            <div class="call-step-label">// ABERTURA E IDENTIFICAÇÃO</div>
+            <div class="call-step-text">"Olá, bom dia! Falo com a Sra. Rose Meire?" ... "Me chamo Elias, da Delboni Auriemo. Estou entrando em contato para confirmar sua tomografia do abdômen com contraste, agendada para 25/ 04 às 13:30. Tudo certo para a senhora comparecer?"</div>
+            <div class="call-step-note"><span class="ok">✓ PONTO ASSERTIVO:</span> Tom caloroso, identificação completa, confirmação imediata do motivo do contato.</div>
+          </div>
+        </div>
+        <div class="call-step" id="cs2">
+          <span class="call-step-num">02</span>
+          <div class="call-step-content">
+            <div class="call-step-label">// CONFIRMAÇÃO POSITIVA</div>
+            <div class="call-step-text">"Perfeito, Sra. Rose Meire! Fico feliz que esteja confirmada. Vou te passar algumas orientações muito importantes para garantir que o seu exame ocorra com total segurança, tudo bem com a senhora?"</div>
+            <div class="call-step-note"><span class="ok">✓ TÉCNICA:</span> Personalização pelo nome, "Mais Amor no Alô" - a paciente é o amor da vida de alguém.</div>
+          </div>
+        </div>
+        <div class="call-step" id="cs3">
+          <span class="call-step-num">03</span>
+          <div class="call-step-content">
+            <div class="call-step-label">// TRIAGEM OBRIGATÓRIA - PERGUNTA 1</div>
+            <div class="call-step-text">"Sra. Rose Meire, preciso fazer algumas perguntas de segurança. A senhora possui alguma alergia, principalmente a contraste ou ao iodo?"</div>
+            <div class="call-step-note"><span class="warn">⚠ ATENÇÃO:</span> Rose Meire responde que SIM - "Acho que tenho alergia a iodo." - PROTOCOLO DE ALERTA ATIVADO.</div>
+          </div>
+        </div>
+        <div class="call-step" id="cs4">
+          <span class="call-step-num">04</span>
+          <div class="call-step-content">
+            <div class="call-step-label">// TRIAGEM - PERGUNTAS 2 E 3</div>
+            <div class="call-step-text">"Entendido, Sra. Rose Meire. A senhora já realizou esse tipo de exame com contraste antes? Teve alguma reação?" - "E a senhora faz uso de algum medicamento contínuo ou tem algum problema nos rins?"</div>
+            <div class="call-step-note"><span class="ok">✓ ASSERTIVO:</span> Manter calma, não alarmar. Identificar todos os riscos antes de orientar.</div>
+          </div>
+        </div>
+        <div class="call-step alert-step" id="cs5">
+          <span class="call-step-num" style="color:var(--red)">05</span>
+          <div class="call-step-content">
+            <div class="call-step-label">// SITUAÇÃO DE ALERTA - PROTOCOLO DE ALERGIA</div>
+            <div class="call-step-text alert-step">"Sra. Rose Meire, como a senhora relatou ter alergia ao iodo, é muito importante que a senhora entre em contato com o seu médico ANTES do exame. Ele vai avaliar a necessidade de uma medicação preventiva ou indicar o melhor ajuste no procedimento para a sua segurança."</div>
+            <div class="call-step-note"><span class="warn">⚠ CRÍTICO:</span> Nunca ignorar alergia declarada. Sempre orientar contato médico. Registrar no sistema.</div>
+          </div>
+        </div>
+        <div class="call-step" id="cs6">
+          <span class="call-step-num">06</span>
+          <div class="call-step-content">
+            <div class="call-step-label">// ORIENTAÇÕES GERAIS</div>
+            <div class="call-step-text">"Além disso, Sra. Rose Meire: o contraste será aplicado na veia para melhorar a qualidade das imagens. É importante comparecer em jejum, conforme orientação do seu médico. Pedimos que traga o documento pessoal com foto, a carteirinha do convênio e o pedido médico no dia do exame."</div>
+            <div class="call-step-note"><span class="ok">✓ PONTO ASSERTIVO:</span> Informação completa, clara e sequencial. Confirma o preparo necessário.</div>
+          </div>
+        </div>
+        <div class="call-step" id="cs7">
+          <span class="call-step-num">07</span>
+          <div class="call-step-content">
+            <div class="call-step-label">// FECHAMENTO CONSULTIVO</div>
+            <div class="call-step-text">"O exame será realizado na unidade Luiz Dumont Villares. Recomendamos chegar com 30 minutos de antecedência. Caso não possa comparecer por qualquer motivo, pedimos que nos avise com antecedência para reorganizarmos a agenda, tudo bem? A Sra tem alguma dúvida que eu possa esclarecer?"</div>
+            <div class="call-step-note"><span class="ok">✓ SENSO DE DONO:</span> Antecipa possível falta, abre espaço para dúvidas, finaliza com empatia e resolutividade.</div>
+          </div>
+        </div>
+        <button class="call-reveal-btn" id="reveal-btn" onclick="revealSteps()">▸ CONTINUAR</button>
+      </div>
+    </div>
+
+    <!-- ANÁLISE DO CASO -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:40px;">
+      <div style="background:rgba(0,229,255,0.06);border:1px solid var(--cyan3);padding:28px;" class="reveal">
+        <div style="font-family:var(--font-head);font-size:12px;color:var(--cyan);letter-spacing:2px;margin-bottom:16px;">✓ PONTOS ASSERTIVOS</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--cyan3);">Identificação completa e profissional</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--cyan3);">Triagem de segurança executada corretamente</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--cyan3);">Protocolo de alergia ativado com precisão</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--cyan3);">Tom empático e acolhedor durante alerta</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--cyan3);">Orientações completas e sequenciadas</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--cyan3);">Fechamento com abertura para dúvidas</li>
+        </ul>
+      </div>
+      <div style="background:rgba(255,179,0,0.05);border:1px solid #7a5500;padding:28px;" class="reveal reveal-delay-1">
+        <div style="font-family:var(--font-head);font-size:12px;color:#ffb300;letter-spacing:2px;margin-bottom:16px;">▲ PONTOS DE MELHORIA</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid #7a5500;">Registrar o alerta de alergia no sistema</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid #7a5500;">Perguntar sobre medicamento contínuo (Metformina)</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid #7a5500;">Confirmar se paciente tem resultado de creatinina recente</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid #7a5500;">Enviar preparo por e-mail após a ligação</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid #7a5500;">Evitar jargões técnicos com paciente leigo</li>
+        </ul>
+      </div>
+      <div style="background:rgba(255,23,68,0.05);border:1px solid var(--red2);padding:28px;" class="reveal reveal-delay-2">
+        <div style="font-family:var(--font-head);font-size:12px;color:var(--red);letter-spacing:2px;margin-bottom:16px;">⚡ TÉCNICAS DE VENDAS</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--red2);">Personalização pelo nome gera conexão</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--red2);">Triagem = demonstração de cuidado genuíno</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--red2);">Alerta de alergia = fidelização por segurança</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--red2);">Tom consultivo, não robótico</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--red2);">Abertura para dúvidas = Senso de Dono</li>
+          <li style="font-size:13px;color:var(--gray3);padding-left:12px;border-left:1px solid var(--red2);">Redução de faltas = impacto financeiro</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PILARES DASA -->
+<section id="pilares">
+  <span class="section-label">// 05 - CULTURA DASA</span>
+  <h2 class="section-title">Mais Amor no Alô -<br><span>4 Pilares</span></h2>
+  <p class="section-desc">Os pilares do atendimento humanizado DASA aplicados à Medicina Nuclear. Quando o exame é caro e sensível, o acolhimento faz toda a diferença.</p>
+  <div class="pilares-grid reveal">
+    <div class="pilar-card" data-num="01">
+      <span class="pilar-icon">🎙️</span>
+      <h3>Entonação</h3>
+      <p>A "melodia" da voz transmite emoção e intenção. Ajuste velocidade, volume e ritmo. Demonstre ânimo genuíno. Nunca use tom agressivo, ríspido ou apático. Adapte ao perfil do paciente.</p>
+    </div>
+    <div class="pilar-card" data-num="02">
+      <span class="pilar-icon">🤝</span>
+      <h3>Humanizado</h3>
+      <p>Coloque a pessoa no centro. Escuta ativa sem interrupções. Empatia real - reconheça emoções e preocupações. Use linguagem acessível, sem jargões. Lembre: o paciente é o amor da vida de alguém.</p>
+    </div>
+    <div class="pilar-card" data-num="03">
+      <span class="pilar-icon">💛</span>
+      <h3>Acolhedor</h3>
+      <p>Empatia + comunicação clara + atitude positiva + escuta ativa + personalização. "Fique tranquila, Sra. Rose Meire, vou verificar e fazer o possível para garantir sua segurança."</p>
+    </div>
+    <div class="pilar-card" data-num="04">
+      <span class="pilar-icon">⭐</span>
+      <h3>Senso de Dono</h3>
+      <p>Proatividade, comprometimento, empoderamento e melhoria contínua. Antecipe problemas antes que o paciente perceba. Resolva no primeiro contato, seja o responsável pela solução.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TÉCNICAS DE VENDAS -->
+<div id="vendas">
+  <div>
+    <span class="section-label">// 06 - PERFORMANCE</span>
+    <h2 class="section-title">Técnicas de <span>Atendimento</span> & <span class="red">Vendas</span></h2>
+    <p class="section-desc">Pontos assertivos, oportunidades de melhoria e técnicas de vendas consultivas específicas para minha equipe - Medicina Nuclear.</p>
+    <div class="vendas-grid reveal">
+      <div class="vendas-col assertivos">
+        <h3>✓ Pontos Assertivos</h3>
+        <div class="vendas-items">
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Executar triagem completa de segurança</div>
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Identificar alergias antes de confirmar</div>
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Personalizar atendimento com nome do paciente</div>
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Explicar o exame de forma clara e acessível</div>
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Informar preparo completo e orientar jejum</div>
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Informar importância do cancelamento antecipado</div>
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Solicitar aviso prévio em caso de falta</div>
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Registrar alertas no sistema corretamente</div>
+          <div class="vendas-item"><div class="item-dot dot-cyan"></div>Tom empático durante situações de alerta</div>
+        </div>
+      </div>
+      <div class="vendas-col melhoria">
+        <h3>▲ Oportunidades de Melhoria</h3>
+        <div class="vendas-items">
+          <div class="vendas-item"><div class="item-dot dot-yellow"></div>Não pular etapas da triagem de segurança</div>
+          <div class="vendas-item"><div class="item-dot dot-yellow"></div>Evitar vocabulário técnico médico com leigos</div>
+          <div class="vendas-item"><div class="item-dot dot-yellow"></div>Verificar uso de Metformina antes do contraste</div>
+          <div class="vendas-item"><div class="item-dot dot-yellow"></div>Confirmar função renal quando necessário</div>
+          <div class="vendas-item"><div class="item-dot dot-yellow"></div>Enviar preparo por e-mail após atendimento</div>
+          <div class="vendas-item"><div class="item-dot dot-yellow"></div>Não robotizar o roteiro, humanize cada chamada</div>
+          <div class="vendas-item"><div class="item-dot dot-yellow"></div>Atenção ao agendamento na sala de anestesia</div>
+          <div class="vendas-item"><div class="item-dot dot-yellow"></div>Verificar cobertura do convênio para sedação</div>
+        </div>
+      </div>
+      <div class="vendas-col tecnicas">
+        <h3>⚡ Técnicas de Vendas Consultivas</h3>
+        <div class="vendas-items">
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Rapport - crie conexão genuína desde a abertura</div>
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Escuta Ativa - ouça para entender, não para responder</div>
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Personalização - use nome e contexto do paciente</div>
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Consultivo - posicione-se como aliado, não vendedor</div>
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Urgência segura - reduza faltas explicando o custo</div>
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Objeção -> Empatia + Solução + Confirmação</div>
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Fechamento consultivo com abertura para dúvidas</div>
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Pesquisa de satisfação - ouro para fidelização</div>
+          <div class="vendas-item"><div class="item-dot dot-red"></div>Proatividade = Senso de Dono em ação</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGRAS SP vs RJ -->
+<section id="regras">
+  <span class="section-label">// 07 - PROTOCOLOS REGIONAIS</span>
+  <h2 class="section-title">Regras <span>SP</span> vs <span class="red">RJ</span></h2>
+  <div style="display:flex;gap:0;border:1px solid var(--gray);overflow:hidden;width:fit-content;margin-top:40px;">
+    <button class="regra-btn active-sp" id="btn-sp" onclick="showRegra('sp')">SÃO PAULO</button>
+    <button class="regra-btn" id="btn-rj" onclick="showRegra('rj')">RIO DE JANEIRO</button>
+  </div>
+  <div id="sp-panel" class="regras-content active" style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+    <div class="regra-section">
+      <h4>TOMOGRAFIA - SÃO PAULO</h4>
+      <ul class="regra-list">
+        <li>Contraste já incluso no valor (convênio e particular)</li>
+        <li>Não cadastrar contraste separadamente</li>
+        <li>Sedação: Delboni Auriemo e Alta SP</li>
+        <li>Com anestesia: agendamento na sala exclusiva de anestesia</li>
+        <li>Exames pré-anestésicos obrigatórios para pacientes +50 anos</li>
+        <li>Anestesia: valor por quantidade de exames - sem desconto</li>
+        <li>Artrotomografia: somente no Delboni</li>
+      </ul>
+    </div>
+    <div class="regra-section">
+      <h4>RESSONÂNCIA MAGNÉTICA - SÃO PAULO</h4>
+      <ul class="regra-list">
+        <li>Somente campo fechado - não há máquina de campo aberto</li>
+        <li>Aparelhos mais amplos: 3 Teslas</li>
+        <li>Unidades: Delboni (Jardim Sul), Alta Excelência (Ibirapuera e Higienópolis)</li>
+        <li>Máximo 4 RM no mesmo dia</li>
+        <li>TC e RM mesmo dia: agendar TC primeiro</li>
+        <li>Alergia ao Gadolínio SP: agendar normalmente + receita 48h antes</li>
+        <li>Sedação RM: Delboni e Alta SP (via central)</li>
+      </ul>
+    </div>
+  </div>
+  <div id="rj-panel" class="regras-content" style="margin-top:40px;display:none;grid-template-columns:1fr 1fr;gap:40px;">
+    <div class="regra-section">
+      <h4>TOMOGRAFIA - RIO DE JANEIRO</h4>
+      <ul class="regra-list">
+        <li>Bronstein, CDPI RJ, Multimagem, Alta RJ: cobram contraste separado</li>
+        <li>CDPI Niterói e Lâmina: contraste não cobrado</li>
+        <li>Sedação TC: CDPI RJ (abrir retorno)</li>
+        <li>Abrir retorno para TC com anestesia no RJ</li>
+      </ul>
+    </div>
+    <div class="regra-section">
+      <h4>RESSONÂNCIA MAGNÉTICA - RIO DE JANEIRO</h4>
+      <ul class="regra-list">
+        <li>CDPI RJ: Barra Shopping e Ipanema</li>
+        <li>RM de corpo inteiro: somente no CDPI RJ (abrir retorno)</li>
+        <li>Sedação RM RJ: CDPI RJ e Multi Imagem (abrir retorno)</li>
+        <li>Cintilografia Gálio 67: Hospital Santa Paula - pacientes +12 anos</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div>
+    <span class="section-label" style="text-align:center;display:block;">// 08 - TESTE SEU CONHECIMENTO</span>
+    <h2 class="section-title" style="text-align:center;">Quiz <span>Medicina Nuclear</span></h2>
+    <p style="color:var(--gray3);text-align:center;font-size:16px;margin-top:8px;">5 perguntas para testar o que você aprendeu</p>
+    <div class="quiz-box">
+      <div class="quiz-progress" id="quiz-progress"></div>
+      <div id="quiz-main">
+        <div class="quiz-question" id="q-text"></div>
+        <div class="quiz-options" id="q-options"></div>
+        <div class="quiz-feedback" id="q-feedback"></div>
+        <button class="quiz-next" id="quiz-next" onclick="nextQuestion()">PRÓXIMA PERGUNTA →</button>
+      </div>
+      <div class="quiz-score" id="quiz-score">
+        <div class="score-num" id="score-display">0/5</div>
+        <p id="score-msg"></p>
+        <button class="quiz-restart" onclick="restartQuiz()">↺ TENTAR NOVAMENTE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOSSÁRIO -->
+<section id="glossario">
+  <span class="section-label">// 09 - REFERÊNCIA RÁPIDA</span>
+  <h2 class="section-title">Glossário <span>Nuclear</span></h2>
+  <div class="glossary-search">
+    <input type="text" id="gloss-search" placeholder="Buscar termo..." oninput="filterGloss()">
+    <button>🔍</button>
+  </div>
+  <div class="glossary-grid" id="glossary-grid">
+    <div class="gloss-card" data-term="radiofármaco"><div class="gloss-term">Radiofármaco</div><div class="gloss-def">Substância emissora de radiação utilizada na medicina para diagnóstico por imagem e radioterapia. Manipulada na véspera, é de uso pessoal e intransferível.</div></div>
+    <div class="gloss-card" data-term="contraste"><div class="gloss-term">Contraste Iodado</div><div class="gloss-def">Substância à base de iodo injetada na veia para melhorar a visualização das imagens na tomografia. Pode causar reações alérgicas.</div></div>
+    <div class="gloss-card" data-term="gadolínio"><div class="gloss-term">Gadolínio</div><div class="gloss-def">Contraste utilizado em ressonância magnética. Em caso de alergia, o paciente deve retirar receita antialérgica 48h antes na unidade.</div></div>
+    <div class="gloss-card" data-term="cintilografia"><div class="gloss-term">Cintilografia</div><div class="gloss-def">Exame de medicina nuclear que utiliza radiofármaco para avaliar o funcionamento dos órgãos. Pode avaliar coração, rins, ossos e mais.</div></div>
+    <div class="gloss-card" data-term="pet-ct"><div class="gloss-term">PET-CT</div><div class="gloss-def">Combinação de tomografia e medicina nuclear. Exame de altíssima complexidade para avaliação oncológica, detecção de tumores e metástases.</div></div>
+    <div class="gloss-card" data-term="sedação"><div class="gloss-term">Sedação / Anestesia</div><div class="gloss-def">Necessária quando há imobilidade total. Exige pedido médico com "sedação/anestesia", exames pré-anestésicos (+50 anos) e agendamento em sala exclusiva.</div></div>
+    <div class="gloss-card" data-term="neuroeixo"><div class="gloss-term">NeuroEixo</div><div class="gloss-def">Conjunto do encéfalo e medula espinhal. RM de neuroeixo = RM Crânio + Cervical + Torácica + Lombo Sacra + Cóccix.</div></div>
+    <div class="gloss-card" data-term="angiotomografia"><div class="gloss-term">Angiotomografia</div><div class="gloss-def">Exame diagnóstico que permite avaliar vasos sanguíneos (veias e artérias). Variação da TC com uso obrigatório de contraste.</div></div>
+    <div class="gloss-card" data-term="artrotomografia"><div class="gloss-term">Artrotomografia</div><div class="gloss-def">Administração de contraste dentro da articulação, seguida de TC. Realizada somente no Delboni.</div></div>
+    <div class="gloss-card" data-term="triagem"><div class="gloss-term">Triagem de Segurança</div><div class="gloss-def">Protocolo obrigatório: verificar alergia, histórico de exames, medicamentos, problemas renais e implantes metálicos antes de qualquer exame de imagem com contraste.</div></div>
+    <div class="gloss-card" data-term="tc-99m"><div class="gloss-term">Tecnésio-99m (Tc-99m)</div><div class="gloss-def">Radioisótopo mais utilizado em medicina nuclear. Usado em cintilografias óssea, renal, cardíaca e outras. Emite radiação gama de baixa energia.</div></div>
+    <div class="gloss-card" data-term="cone beam"><div class="gloss-term">Cone Beam</div><div class="gloss-def">TC computadorizada de feixe cônico para odontologia. A DASA realiza a técnica, não possui a máquina. Indicada para fraturas radiculares.</div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="brand-name">DASA // MN</div>
+      <p>Material de treinamento para backoffice ativo. Desenvolvido por Elias Tavares da Silva Neto, para todos: Medicina Nuclear..</p>
+      <div style="margin-top:20px;font-family:var(--font-mono);font-size:11px;color:var(--cyan);">MEDICINA NUCLEAR // SP & RJ</div>
+    </div>
+    <div class="footer-col">
+      <h4>Modalidades</h4>
+      <ul>
+        <li>Tomografia Computadorizada</li>
+        <li>Ressonância Magnética</li>
+        <li>Cintilografia</li>
+        <li>PET-CT</li>
+        <li>Angiotomografia</li>
+        <li>Artrotomografia</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Pilares DASA</h4>
+      <ul>
+        <li>Entonação</li>
+        <li>Humanizado</li>
+        <li>Acolhedor</li>
+        <li>Senso de Dono</li>
+        <li>Resolutividade</li>
+        <li>Mais Amor no Alô</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© Material Interno de Treinamento</p>
+    <span class="equipe-badge">BKO</span>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+/* ─── LOADER ─── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+    startCounters();
+  }, 2000);
+});
+
+/* ─── CUSTOM CURSOR ─── */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx - 6 + 'px';
+  cursor.style.top = my - 6 + 'px';
+});
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx - 18 + 'px';
+  ring.style.top = ry - 18 + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('button, a, .exam-card, .info-card, .triagem-step').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2.5)'; ring.style.transform = 'scale(1.5)'; });
+  el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)'; ring.style.transform = 'scale(1)'; });
+});
+
+/* ─── HERO CANVAS PARTICLES ─── */
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.5;
+    this.vy = (Math.random() - 0.5) * 0.5;
+    this.r = Math.random() * 2 + 0.5;
+    this.alpha = Math.random() * 0.5 + 0.1;
+    this.color = Math.random() > 0.5 ? '#00e5ff' : '#ff1744';
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.restore();
+  }
+}
+for (let i = 0; i < 120; i++) particles.push(new Particle());
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 120) {
+        ctx.save();
+        ctx.globalAlpha = (1 - d / 120) * 0.08;
+        ctx.strokeStyle = '#00e5ff';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+}
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawConnections();
+  requestAnimationFrame(loop);
+}
+loop();
+
+/* ─── COUNTER ─── */
+function startCounters() {
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = +el.dataset.count;
+    let current = 0;
+    const step = target / 50;
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(timer); }
+      el.textContent = Math.floor(current) + (el.dataset.suffix || '');
+    }, 30);
+  });
+}
+
+/* ─── SCROLL REVEAL ─── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ─── MODAL ─── */
+const modals = {
+  tc: {
+    title: 'Tomografia Computadorizada (TC)',
+    content: `
+      <div class="tip">Exame de Alta Complexidade que utiliza raios-X para captar imagens detalhadas em "fatias" do corpo, processadas por computador para diagnóstico preciso.</div>
+      <h4>Como funciona</h4>
+      <p>O paciente fica deitado em uma mesa que se move através de um equipamento em forma de anel (gantry). Emissores de raio-X rotacionam ao redor do corpo, e detectores captam a radiação, formando imagens tridimensionais.</p>
+      <h4>Tipos de equipamentos</h4>
+      <ul><li>Multi-Slice (multidetectores)</li><li>Helicoidal</li></ul>
+      <h4>Uso do contraste</h4>
+      <p>O contraste iodado é injetado na veia para melhorar a capacidade diagnóstica. <strong>SP:</strong> incluso no valor. <strong>RJ (Bronstein, CDPI, Multimagem, Alta):</strong> cobrado separadamente.</p>
+      <h4>Principais indicações</h4>
+      <ul><li>Investigação de abdômen, tórax, crânio, pelve</li><li>Diagnóstico de tumores e metástases</li><li>Avaliação vascular (angiotomografia)</li><li>Odontológica (maxila e mandíbula)</li></ul>
+      <h4>Triagem obrigatória</h4>
+      <ul><li>Alergia a contraste ou iodo</li><li>Histórico de exames anteriores</li><li>Uso de Metformina (deve ser suspensa)</li><li>Função renal (creatinina)</li></ul>
+      <div class="alert">⚠ Com sedação/anestesia: obrigatório pedido médico especificando, exames pré-anestésicos para +50 anos, e agendamento na sala exclusiva de anestesia.</div>
+    `
+  },
+  rm: {
+    title: 'Ressonância Magnética (RM)',
+    content: `
+      <div class="tip">Exame de Alta Complexidade que não utiliza radiação ionizante, usa campo magnético potente para gerar imagens detalhadas dos órgãos e tecidos moles.</div>
+      <h4>Como funciona</h4>
+      <p>O aparelho gera um campo magnético intenso que alinha os prótons de hidrogênio do corpo. Pulsos de radiofrequência perturbam esse alinhamento e, ao retornarem à posição original, emitem sinais captados para formar a imagem.</p>
+      <h4>Cuidados com objetos metálicos</h4>
+      <ul><li>Marca-passo cardíaco</li><li>Clipes para aneurisma cerebral</li><li>Stents cardíacos (verificar compatibilidade)</li><li>Válvulas metálicas cardíacas</li><li>Prótese auditiva fixa auricular</li><li>Joias, piercings, maquiagem com metal</li></ul>
+      <h4>Regras específicas</h4>
+      <ul><li>Somente campo fechado, não há máquina de campo aberto na DASA</li><li>Aparelhos 3 Teslas, mais amplos e confortáveis</li><li>Máximo 4 RM no mesmo dia</li><li>TC e RM no mesmo dia: agendar TC primeiro</li></ul>
+      <h4>Alergia ao Gadolínio</h4>
+      <p>Em SP: agendar normalmente. Paciente deve retirar a receita de antialérgicos na unidade pelo menos 48h antes.</p>
+      <div class="alert">⚠ RM de Neuroeixo = RM Crânio + Cervical + Torácica + Lombo Sacra + Cóccix (5 exames)</div>
+    `
+  },
+  petct: {
+    title: 'PET-CT - Tomografia por Emissão de Pósitrons',
+    content: `
+      <div class="tip">Exame que combina medicina nuclear (PET) com tomografia (CT). É o exame mais sofisticado da medicina diagnóstica, avaliando metabolismo celular.</div>
+      <h4>O que avalia</h4>
+      <p>Permite detectar tumores primários, metástases, recidivas de câncer e avaliar a resposta ao tratamento quimioterápico/radioterápico. Mostra atividade metabólica das células.</p>
+      <h4>Como funciona</h4>
+      <p>Injeta-se um radiofármaco (geralmente FDG - glicose marcada com Flúor-18). Células tumorais consomem mais glicose e se "iluminam" na imagem combinada PET-CT.</p>
+      <h4>Características</h4>
+      <ul><li>Exige preparo rigoroso: jejum de 6h mínimo</li><li>Glicemia deve estar controlada</li><li>Período de espera após injeção do traçador</li><li>Agendamento pelo setor de Medicina Nuclear</li></ul>
+      <div class="alert">⚠ Exame de altíssimo custo. Sem desconto permitido. Verificar cobertura do convênio antes de qualquer compromisso com o paciente.</div>
+    `
+  },
+  cintil: {
+    title: 'Cintilografia - Medicina Nuclear',
+    content: `
+      <div class="tip">A cintilografia avalia o funcionamento dos órgãos por meio de radiofármacos. É impossível realizar sem a administração do fármaco radioativo.</div>
+      <h4>Princípio</h4>
+      <p>O radiofármaco administrado no paciente se concentra no órgão-alvo. Uma câmara gama (gama-câmara) detecta a radiação emitida e gera imagens funcionais do órgão.</p>
+      <h4>Modalidades disponíveis</h4>
+      <ul><li><strong>Miocárdio:</strong> Avalia irrigação cardíaca. Repouso/Esforço (esteira, Dipiridamol ou Dobutamina)</li><li><strong>Renal:</strong> Avalia função dos rins, DMSA/DTPA</li><li><strong>Óssea:</strong> Detecta metástases e tumores ósseos</li><li><strong>Refluxo Gastroesofágico:</strong> Com alimento trazido pelo paciente</li><li><strong>Esvaziamento Gástrico:</strong> Continuação do MRGE</li><li><strong>Gálio 67:</strong> Rastreia focos infecciosos e tumores</li></ul>
+      <h4>Regra crítica de cancelamento</h4>
+      <div class="alert">⚠ O radiofármaco é MANIPULADO NA VÉSPERA e é de uso PESSOAL e INTRANSFERÍVEL. Cancelamentos devem ser feitos com antecedência máxima. Contato: (3049-6999)</div>
+    `
+  },
+  angio: {
+    title: 'Angio TC / Angio RM',
+    content: `
+      <div class="tip">Método não invasivo para visualizar artérias e veias do corpo. Permite diagnóstico vascular com excelente qualidade de imagem e sem procedimentos invasivos.</div>
+      <h4>Angiotomografia (Angio TC)</h4>
+      <p>Usa TC com contraste iodado para avaliar vasos sanguíneos. Indicada para suspeita de aneurismas, estenoses, tromboses e malformações vasculares.</p>
+      <h4>Angioressonância (Angio RM)</h4>
+      <p>Usa RM com ou sem contraste gadolínio. Não usa radiação ionizante. Pode avaliar vasos cerebrais, coronárias, aorta e membros.</p>
+      <h4>Nomenclaturas equivalentes</h4>
+      <ul><li>Angioressonância Tórax = Angio RM Tórax</li><li>Angio TC Arterial Tórax = Angio TC Arterial Tórax</li></ul>
+      <div class="tip">💡 Artrotomografia (Artro-TC): contraste injetado dentro da articulação + TC. Somente no Delboni.</div>
+    `
+  },
+  sedacao: {
+    title: 'Sedação / Anestesia em Exames de Imagem',
+    content: `
+      <div class="tip">Necessária quando o paciente precisa de imobilidade total durante o exame. Alguns médicos solicitam sedativo para evitar interferência na aquisição de imagens.</div>
+      <h4>Requisitos obrigatórios</h4>
+      <ul><li>Pedido médico deve conter explicitamente: "com sedação" e/ou "anestesia"</li><li>Sem essa informação no PM, NÃO é possível realizar</li><li>Agendamento SOMENTE na sala exclusiva de anestesia</li></ul>
+      <h4>Exames pré-anestésicos (+50 anos)</h4>
+      <ul><li>Eletrocardiograma com laudo (últimos 6 meses)</li><li>Raio-X de tórax</li><li>Hemograma</li><li>Carta de avaliação cardiológica autorizando a sedação</li></ul>
+      <h4>Jejum</h4>
+      <ul><li>Adultos e crianças +3 anos: jejum absoluto de 8h (inclusive água)</li><li>Crianças até 3 anos: 6h (outros alimentos), 4h (leite materno)</li></ul>
+      <h4>Locais</h4>
+      <ul><li><strong>TC SP:</strong> Delboni Auriemo e Alta SP</li><li><strong>TC RJ:</strong> CDPI RJ (abrir retorno)</li><li><strong>RM SP:</strong> Delboni e Alta SP (via central)</li><li><strong>RM RJ:</strong> CDPI RJ e Multi Imagem (abrir retorno)</li></ul>
+      <div class="alert">⚠ Sem os laudos pré-anestésicos, o exame NÃO pode ser realizado. Informar o paciente com antecedência para coleta de tais documentos.</div>
+    `
+  }
+};
+function openModal(type) {
+  const m = modals[type];
+  if (!m) return;
+  document.getElementById('modal-inner').innerHTML = `<div class="modal-title">${m.title}</div><div class="modal-content">${m.content}</div>`;
+  document.getElementById('modal-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ─── TABS ─── */
+function showTab(id, btn) {
+  document.querySelectorAll('.cintil-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cintil-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ─── REGRAS ─── */
+function showRegra(r) {
+  if (r === 'sp') {
+    document.getElementById('sp-panel').style.display = 'grid';
+    document.getElementById('rj-panel').style.display = 'none';
+    document.getElementById('btn-sp').className = 'regra-btn active-sp';
+    document.getElementById('btn-rj').className = 'regra-btn';
+  } else {
+    document.getElementById('sp-panel').style.display = 'none';
+    document.getElementById('rj-panel').style.display = 'grid';
+    document.getElementById('btn-rj').className = 'regra-btn active-rj';
+    document.getElementById('btn-sp').className = 'regra-btn';
+  }
+}
+
+/* ─── CALL SCRIPT REVEAL ─── */
+let stepsRevealed = 1;
+function revealSteps() {
+  stepsRevealed++;
+  const step = document.getElementById('cs' + stepsRevealed);
+  if (step) {
+    step.classList.add('revealed');
+    if (stepsRevealed >= 7) {
+      document.getElementById('reveal-btn').textContent = '✓ ROTEIRO COMPLETO REVELADO';
+      document.getElementById('reveal-btn').style.background = '#00e676';
+    }
+  }
+}
+
+/* ─── QUIZ ─── */
+const questions = [
+  {
+    q: "Paciente com alergia ao iodo liga para confirmar TC de abdômen com contraste. O que você deve fazer?",
+    opts: ["Cancelar o exame imediatamente", "Registrar a alergia, informar a paciente e orientar contato com médico para medicação preventiva", "Agendar normalmente e avisar a unidade", "Negar o agendamento por segurança"],
+    correct: 1,
+    exp: "Correto! A triagem identifica o risco, você orienta contato médico para avaliação e possível medicação preventiva, nunca cancela unilateralmente nem ignora a alergia."
+  },
+  {
+    q: "O radiofármaco utilizado na Cintilografia Óssea é manipulado na véspera do exame. O que isso implica no atendimento?",
+    opts: ["Nada, o cancelamento pode ser feito a qualquer momento", "O paciente deve ser informado que cancelamentos tardios causam desperdício e devem ser comunicados com antecedência", "O exame pode ser transferido para outro paciente facilmente", "O material pode ser armazenado por até 30 dias"],
+    correct: 1,
+    exp: "Perfeito! O radiofármaco é de uso pessoal e intransferível. Cancelamentos devem ser comunicados com o máximo de antecedência possível ao (3049-6999)."
+  },
+  {
+    q: "Paciente solicita TC com sedação em São Paulo. Ele tem 55 anos. Quais documentos são obrigatórios?",
+    opts: ["Apenas o pedido médico com 'sedação' descrito", "Pedido médico + ECG com laudo (6 meses) + Raio-X de tórax + Hemograma + Carta cardiológica", "Apenas o pedido médico e RG", "Nenhum documento adicional é necessário"],
+    correct: 1,
+    exp: "Exato! Para +50 anos com anestesia: ECG com laudo (últimos 6 meses), Raio-X de tórax e hemograma são obrigatórios, além de carta cardiológica autorizando a sedação."
+  },
+  {
+    q: "Qual a diferença entre Cintilografia do Miocárdio com CMRE e com CMDI?",
+    opts: ["Não há diferença, são o mesmo exame", "CMRE usa esteira (esforço físico), CMDI usa Dipiridamol intravenoso para pacientes que não conseguem fazer esforço", "CMRE avalia rins e CMDI avalia o coração", "CMDI é mais caro que CMRE"],
+    correct: 1,
+    exp: "Correto! CMRE = esteira. CMDI = Dipiridamol EV. CMDO = Dobutamina EV. Para pacientes impossibilitados de realizar esforço, usamos as variações farmacológicas."
+  },
+  {
+    q: "No contexto do 'Mais Amor no Alô', qual é o pilar que representa antecipar problemas e buscar soluções antes que o paciente precise pedir?",
+    opts: ["Entonação", "Humanizado", "Acolhedor", "Senso de Dono"],
+    correct: 3,
+    exp: "Perfeito! Senso de Dono = proatividade, comprometimento e melhoria contínua. O colaborador que tem senso de pertencimento antecipa problemas e trata a situação do paciente como sua própria."
+  }
+];
+let currentQ = 0, score = 0, answered = false;
+function initQuiz() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('quiz-main').style.display = 'block';
+  document.getElementById('quiz-score').style.display = 'none';
+  renderQuestion();
+}
+function renderQuestion() {
+  answered = false;
+  const q = questions[currentQ];
+  const prog = document.getElementById('quiz-progress');
+  prog.innerHTML = questions.map((_, i) => `<div class="qp-bar ${i < currentQ ? 'done' : i === currentQ ? 'current' : ''}"></div>`).join('');
+  document.getElementById('q-text').textContent = q.q;
+  const letters = ['A', 'B', 'C', 'D'];
+  document.getElementById('q-options').innerHTML = q.opts.map((o, i) =>
+    `<div class="quiz-opt" onclick="selectOpt(${i})" id="opt-${i}"><span class="opt-letter">${letters[i]}</span>${o}</div>`
+  ).join('');
+  document.getElementById('q-feedback').style.display = 'none';
+  document.getElementById('quiz-next').style.display = 'none';
+}
+function selectOpt(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const fb = document.getElementById('q-feedback');
+  document.querySelectorAll('.quiz-opt').forEach(o => o.classList.add('disabled'));
+  if (i === q.correct) {
+    document.getElementById('opt-' + i).classList.add('correct');
+    fb.className = 'quiz-feedback correct';
+    fb.textContent = '✓ ' + q.exp;
+    score++;
+  } else {
+    document.getElementById('opt-' + i).classList.add('wrong');
+    document.getElementById('opt-' + q.correct).classList.add('correct');
+    fb.className = 'quiz-feedback wrong';
+    fb.textContent = '✗ ' + q.exp;
+  }
+  fb.style.display = 'block';
+  document.getElementById('quiz-next').style.display = 'block';
+  document.getElementById('quiz-next').textContent = currentQ < questions.length - 1 ? 'PRÓXIMA PERGUNTA →' : 'VER RESULTADO →';
+}
+function nextQuestion() {
+  currentQ++;
+  if (currentQ < questions.length) { renderQuestion(); }
+  else {
+    document.getElementById('quiz-main').style.display = 'none';
+    const s = document.getElementById('quiz-score');
+    s.style.display = 'block';
+    document.getElementById('score-display').textContent = score + '/' + questions.length;
+    const msgs = ['Continue estudando!', 'Bom progresso!', 'Muito bom!', 'Ótimo resultado!', 'Perfeito = expert em Medicina Nuclear!'];
+    document.getElementById('score-msg').textContent = msgs[score] || msgs[4];
+  }
+}
+function restartQuiz() { initQuiz(); }
+initQuiz();
+
+/* ─── GLOSSARY FILTER ─── */
+function filterGloss() {
+  const val = document.getElementById('gloss-search').value.toLowerCase();
+  document.querySelectorAll('.gloss-card').forEach(c => {
+    const term = c.dataset.term + ' ' + c.querySelector('.gloss-def').textContent.toLowerCase();
+    c.style.display = term.includes(val) ? 'block' : 'none';
+  });
+}
+</script>
+
+</body>
+</html>
